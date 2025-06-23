@@ -102,11 +102,17 @@ function moveCar(direction) {
       dx = -Math.sin(rad) * step;
       dy = Math.cos(rad) * step;
       break;
-    case 'q': // nach links drehen
+    case 'q': // nach links drehen und vorwärts fahren
       rotation -= step / turnRadius * 180 / Math.PI;
+      const radQ = degToRad(rotation);
+      dx = Math.sin(radQ) * step;
+      dy = -Math.cos(radQ) * step;
       break;
-    case 'e': // nach rechts drehen
+    case 'e': // nach rechts drehen und vorwärts fahren
       rotation += step / turnRadius * 180 / Math.PI;
+      const radE = degToRad(rotation);
+      dx = Math.sin(radE) * step;
+      dy = -Math.cos(radE) * step;
       break;
   }
 
