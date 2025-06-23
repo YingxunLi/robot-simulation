@@ -1,70 +1,76 @@
+// Referenzen auf die Hauptelemente des Autos und Greifarms
 const car = document.getElementById('car');
 const arm = document.getElementById('arm');
 const wrist = document.getElementById('wrist');
 const fingerL = document.getElementById('fingerL');
 const fingerR = document.getElementById('fingerR');
-// 获取四个轮子
+// Referenzen auf die vier Räder
 const wheel1 = document.getElementById('wheel1');
 const wheel2 = document.getElementById('wheel2');
 const wheel3 = document.getElementById('wheel3');
 const wheel4 = document.getElementById('wheel4');
-const carWidth = 182.577;
-const carHeight = 281.553;
+const carWidth = 127.804;   // 182.577 * 0.7
+const carHeight = 197.087;  // 281.553 * 0.7
 
-
-// 轮子相对于 car 左上角的偏移量（请根据实际图片调整）
+// Offset-Werte der Räder relativ zur linken oberen Ecke des Autos (ggf. anpassen)
 const wheelOffsets = [
-  { left: 10, top: 20 },    // wheel1 左上
-  { left: 130, top: 20 },   // wheel2 右上
-  { left: 10, top: 230 },   // wheel3 左下
-  { left: 130, top: 230 }   // wheel4 右下
+  { left: 7, top: 14 },     // 10*0.7, 20*0.7
+  { left: 91, top: 14 },    // 130*0.7, 20*0.7
+  { left: 7, top: 161 },    // 10*0.7, 230*0.7
+  { left: 91, top: 161 }    // 130*0.7, 230*0.7
 ];
 
 let rotation = 0;
 const step = 2.3;
 
-let armHeight = 311.262;
-const armMin = 20, armMax = 311.262;
-let gripperOpenAmount = 0;
-let keysPressed = {};
+// Armhöhe (Steuerung des Arms)
+let armHeight = 217.883;    // 311.262 * 0.7
+const armMin = 14, armMax = 217.883; // 20*0.7, 311.262*0.7
+let gripperOpenAmount = 0; // Öffnungsgrad des Greifers (0 = zu, 1 = maximal offen)
+let keysPressed = {}; // Merkt gedrückte Tasten
 
-const armBaseHeight = 311.262;
-const wristBaseHeight = 76.836;
-const wristOffsetY = -61.051;
-const wristOffsetX = -7.044;
-const fingerL_X = -45.332;
-const fingerR_X = 65.245;
-const fingerY = -240.239;
+// Basiswerte für Arm und Handgelenk (Positionierung)
+const armBaseHeight = 217.883;       // 311.262 * 0.7
+const wristBaseHeight = 53.785;      // 76.836 * 0.7
+const wristBaseWidth = 59.336;       // 84.765 * 0.7
+const wristOffsetY = -42.736;        // -61.051 * 0.7
+const wristOffsetX = -5.431;         // -7.044 * 0.7
+const fingerL_X = -31.732;           // -45.332 * 0.7
+const fingerR_X = 44.672;            // 65.245 * 0.7
+const fingerY = -169.867;            // -240.239 * 0.7
 
+// Hilfsfunktion: Grad in Radiant umrechnen
 function degToRad(deg) {
   return deg * Math.PI / 180;
 }
 
+// Aktualisiert die Position und Darstellung des Arms und Greifers
 function updateArm() {
-  // 1. arm 以底边为基准，bottom 固定，height 变化
+  // 1. Der Arm wird von unten nach oben skaliert (bottom bleibt fixiert, Höhe verändert sich)
   arm.style.height = armHeight + 'px';
   arm.style.bottom = '0px';
-  arm.style.top = ''; // 清空 top，避免冲突
+  arm.style.top = ''; // top zurücksetzen, um Konflikte zu vermeiden
 
-  // 计算 arm 顶部的 top（相对于 car 容器）
+  // Berechnet die obere Kante des Arms relativ zum Auto-Container
   const armTop = carHeight - armHeight;
 
-  // 2. wrist 跟随 arm 顶部移动，不缩放
+  // 2. Das Handgelenk folgt der Armspitze, bleibt aber in der Größe konstant
   wrist.style.left = wristOffsetX + 'px';
   wrist.style.top = (armTop + wristOffsetY) + 'px';
   wrist.style.height = wristBaseHeight + 'px';
-  wrist.style.width = '84.765px';
+  wrist.style.width = wristBaseWidth + 'px';
 
-  // 3. 钳子跟随 arm 顶部移动，不缩放
+  // 3. Die Greiferfinger folgen ebenfalls der Armspitze, bleiben aber in der Größe konstant
   fingerL.style.left = fingerL_X + 'px';
   fingerL.style.top = (armTop + fingerY) + 'px';
   fingerR.style.left = fingerR_X + 'px';
   fingerR.style.top = (armTop + fingerY) + 'px';
 
 
-  // 4. 钳子张合动画
-  const maxRotate = 20;      // 最大张开角度
-  const maxTranslate = 10;   // 最大水平平移距离（像素）
+  // 4. Animation für das Öffnen und Schließen der Greiferfinger
+  // Die Finger rotieren und verschieben sich horizontal je nach Öffnungsgrad
+  const maxRotate = 20;      // maximaler Öffnungswinkel
+  const maxTranslate = 10;   // maximale horizontale Verschiebung (Pixel)
   const rotateL = -5 - (maxRotate - 5) * gripperOpenAmount;
   const rotateR = 5 + (maxRotate - 5) * gripperOpenAmount;
   const translateX = maxTranslate * gripperOpenAmount;
@@ -73,7 +79,7 @@ function updateArm() {
   fingerR.style.transform = `rotate(${rotateR}deg) translateX(${translateX}px)`;
 }
 
-// 更新四个轮子的位置和旋转
+// Aktualisiert die Drehung aller vier Räder (optische Animation)
 function updateWheels() {
   const wheels = [wheel1, wheel2, wheel3, wheel4];
   for (let i = 0; i < 4; i++) {
@@ -81,24 +87,25 @@ function updateWheels() {
   }
 }
 
+// Bewegt das Auto in die gewünschte Richtung (vorwärts, rückwärts, drehen)
 function moveCar(direction) {
   const rad = degToRad(rotation);
   let dx = 0, dy = 0;
   const turnRadius = 150;
 
   switch (direction) {
-    case 'w':
+    case 'w': // vorwärts
       dx = Math.sin(rad) * step;
       dy = -Math.cos(rad) * step;
       break;
-    case 's':
+    case 's': // rückwärts
       dx = -Math.sin(rad) * step;
       dy = Math.cos(rad) * step;
       break;
-    case 'q':
+    case 'q': // nach links drehen
       rotation -= step / turnRadius * 180 / Math.PI;
       break;
-    case 'e':
+    case 'e': // nach rechts drehen
       rotation += step / turnRadius * 180 / Math.PI;
       break;
   }
@@ -106,6 +113,7 @@ function moveCar(direction) {
   carX += dx;
   carY += dy;
 
+  // Begrenzung: Das Auto bleibt im sichtbaren Bereich des Fensters
   carX = Math.min(window.innerWidth - carWidth, Math.max(0, carX));
   carY = Math.min(window.innerHeight - carHeight, Math.max(0, carY));
 
@@ -115,14 +123,17 @@ function moveCar(direction) {
   updateWheels();
 }
 
+// Hauptsteuerungsschleife: prüft gedrückte Tasten und aktualisiert Positionen/Animationen
 function controlLoop() {
   let changed = false;
 
+  // Arm senken
   if (keysPressed['f']) {
     const prev = armHeight;
     armHeight = Math.max(armMin, armHeight - 0.5);
     changed ||= (prev !== armHeight);
   }
+  // Arm heben
   if (keysPressed['r']) {
     const prev = armHeight;
     armHeight = Math.min(armMax, armHeight + 0.5);
@@ -130,26 +141,31 @@ function controlLoop() {
   }
   if (changed) updateArm();
 
+  // Greifer öffnen
   if (keysPressed['t']) {
     gripperOpenAmount += 0.02;
-    if (gripperOpenAmount > 1) gripperOpenAmount = 1; // 限制最大
+    if (gripperOpenAmount > 1) gripperOpenAmount = 1; // Maximalwert
   }
+  // Greifer schließen
   if (keysPressed['g']) {
     gripperOpenAmount -= 0.02;
-    if (gripperOpenAmount < 0) gripperOpenAmount = 0; // 限制最小
+    if (gripperOpenAmount < 0) gripperOpenAmount = 0; // Minimalwert
   }
 
   updateArm();
 
+  // Bewegung: vorwärts, rückwärts, drehen
   ['w', 's', 'q', 'e'].forEach(key => {
     if (keysPressed[key]) moveCar(key);
   });
 
+  // Seitwärtsbewegung nach links
   if (keysPressed['a']) {
     carX -= step;
     carX = Math.max(0, carX);
     car.style.left = carX + 'px';
   }
+  // Seitwärtsbewegung nach rechts
   if (keysPressed['d']) {
     carX += step;
     carX = Math.min(window.innerWidth - carWidth, carX);
@@ -159,6 +175,7 @@ function controlLoop() {
   requestAnimationFrame(controlLoop);
 }
 
+// Tastendruck-Handler: merkt gedrückte Steuerungstasten
 window.addEventListener('keydown', e => {
   const key = e.key.toLowerCase();
   if (['w','a','s','d','q','e','r','f','t','g'].includes(key)) {
@@ -167,12 +184,13 @@ window.addEventListener('keydown', e => {
   }
 });
 
+// Tastenloslassen-Handler: setzt gedrückte Tasten zurück
 window.addEventListener('keyup', e => {
   const key = e.key.toLowerCase();
   if (key in keysPressed) keysPressed[key] = false;
 });
 
-// 保持窗口居中
+// Zentriert das Auto beim Start im Fenster
 function centerCar() {
   carX = (window.innerWidth - carWidth) / 2;
   carY = (window.innerHeight - carHeight) / 2;
@@ -182,7 +200,8 @@ function centerCar() {
   updateWheels();
 }
 
-// 轮播相关：获取轮子容器和图片
+// Animation für die Räder (optional, falls Container vorhanden)
+// Holt die Container und Bilder der Räder
 const wheelContainers = [
   document.getElementById('wheel1-container'),
   document.getElementById('wheel2-container'),
@@ -195,9 +214,10 @@ const wheelImgs = [
   wheelContainers[2]?.querySelector('.wheel-img'),
   wheelContainers[3]?.querySelector('.wheel-img')
 ];
-const wheelImgHeight = 48; // 轮子图片高度(px)
-let wheelOffsetsY = [0, 0, 0, 0]; // 每个轮子的当前Y偏移
+const wheelImgHeight = 33.6;         // 48 * 0.7
+let wheelOffsetsY = [0, 0, 0, 0]; // Aktuelle Y-Offsets für jedes Rad
 
+// Aktualisiert die Animation der Räder (vertikales Scrollen für optischen Effekt)
 function updateWheelAnimation() {
   for (let i = 0; i < 4; i++) {
     if (!wheelContainers[i] || !wheelImgs[i]) continue;
@@ -205,15 +225,15 @@ function updateWheelAnimation() {
     if (wheelOffsetsY[i] <= -wheelImgHeight) {
       wheelOffsetsY[i] += wheelImgHeight;
     }
-    // 主图片
+    // Hauptbild
     wheelImgs[i].style.position = 'absolute';
     wheelImgs[i].style.left = '0px';
-    wheelImgs[i].style.width = '48px';
-    wheelImgs[i].style.height = '48px';
+    wheelImgs[i].style.width = '33.6px';
+    wheelImgs[i].style.height = '33.6px';
     let y = wheelOffsetsY[i] % wheelImgHeight;
     if (y < 0) y += wheelImgHeight;
     wheelImgs[i].style.top = (y - wheelImgHeight) + 'px';
-    // 复制一份图片用于无缝循环
+    // Kopie für nahtlose Schleife
     let copyImg = wheelContainers[i].querySelector('.wheel-img-copy');
     if (!copyImg) {
       copyImg = wheelImgs[i].cloneNode();
@@ -222,16 +242,16 @@ function updateWheelAnimation() {
     }
     copyImg.style.position = 'absolute';
     copyImg.style.left = '0px';
-    copyImg.style.width = '48px';
-    copyImg.style.height = '48px';
+    copyImg.style.width = '33.6px';
+    copyImg.style.height = '33.6px';
     copyImg.style.top = y + 'px';
   }
   requestAnimationFrame(updateWheelAnimation);
 }
 
-// 初始化
+// Initialisierung: Auto zentrieren, Arm und Räder setzen, Steuerung und Animation starten
 centerCar();
 updateArm();
 updateWheels();
 controlLoop();
-updateWheelAnimation(); // 启动轮播动画
+updateWheelAnimation(); // Startet die Rad-Animation
