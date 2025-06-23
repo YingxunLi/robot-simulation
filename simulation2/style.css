@@ -1,0 +1,102 @@
+html, body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  background: url('background.png') no-repeat left top;
+  background-size: 100vw auto;
+  font-family: sans-serif;
+}
+
+/* === 车身相关 === */
+#car {
+  position: absolute;
+  width: 182.577px;
+  height: 281.553px;
+  /* 居中由 JS 控制 */
+}
+
+#body {
+  position: absolute;
+  left: -55.332px;
+  top: 65px;
+  width: 182.577px;
+  height: 281.553px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+#wheel {
+  position: absolute;
+  left: -103.332px;
+  top: 30px;
+  width: 279.146px;
+  height: 358.772px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* === 机械臂 === */
+#arm {
+  position: absolute;
+  left: -0.044px;
+  width: 70.41px;
+  height: 311.262px;
+  bottom: -20px;
+  z-index: 3;
+  pointer-events: none;
+  transition: height 0.1s, top 0.1s;
+}
+
+#wrist {
+  position: absolute;
+  left: -0.044px;
+  top: -71.051px;
+  width: 84.765px;
+  height: 76.836px;
+  z-index: 4;
+  pointer-events: none;
+  transition: height 0.1s, top 0.1s;
+}
+
+#fingerL, 
+#fingerR {
+  position: absolute;
+  width: 50.756px;
+  height: 194.487px;
+  top: -394.239px;
+  pointer-events: none;
+  z-index: 5;
+  transition: transform 0.1s;
+}
+
+#fingerL {
+  left: -45.332px;
+  transform-origin: 88.8% 97.0%;
+
+}
+
+#fingerR {
+  left: 65.245px;
+  transform-origin: 21.2% 97.0%;
+}
+
+/* === 信息面板 === */
+#info {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  /* background: #fff;
+  opacity: 0.1; */
+  padding: 10px;
+  font-size: 14px;
+  color: #8CE87C;
+  border-radius: 5px;
+  /* box-shadow: 0 0 5px rgba(255, 255, 255, 0.2); */
+  /* line-height: 1.6; */
+  z-index: 10;
+}

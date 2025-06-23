@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ferngesteuertes Auto mit Greifarm</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #eee;
+      font-family: sans-serif;
+    }
+    #car {
+      position: absolute;
+      width: 50px;
+      height: 150px;
+      background: #007bff;
+      top: 200px;
+      left: 400px;
+      border-radius: 8px;
+      transition: transform 0.1s linear;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding-left: 15px;
+      box-sizing: border-box;
+    }
+    #arm {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 80px;
+      background: #888;
+      top: -80px;
+      border-radius: 10px 10px 5px 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: top 0.1s, height 0.1s;
+      z-index: 2;
+    }
+    #gripper {
+      width: 40px;
+      height: 20px;
+      background: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: -10px;
+    }
+    .finger {
+      width: 12px;
+      height: 40px;
+      background: #444;
+      border-radius: 4px;
+      transition: transform 0.1s;
+    }
+    #info {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background: #fff;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<div id="car">
+  <div id="arm">
+    <div id="gripper">
+      <div class="finger" id="fingerL"></div>
+      <div class="finger" id="fingerR"></div>
+    </div>
+  </div>
+</div>
+
+<div id="info">
+  <strong>Steuerung:</strong><br />
+  W – Vorwärts<br />
+  S – Rückwärts<br />
+  A – Seitlich links<br />
+  D – Seitlich rechts<br />
+  Q – Nach links drehen<br />
+  E – Nach rechts drehen<br /><br />
+  R – Arm heben<br />
+  F – Arm senken<br />
+  T – Greifer öffnen<br />
+  G – Greifer schließen
+</div>
+
+<script src="control.js"></script>
+
+
+</body>
+</html>
