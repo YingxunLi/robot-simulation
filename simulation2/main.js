@@ -63,8 +63,8 @@ function updateArm() {
 
 
   // 4. 钳子张合动画
-  const maxRotate = 30;
-  const maxTranslate = 10;
+  const maxRotate = 20;      // 最大张开角度
+  const maxTranslate = 10;   // 最大水平平移距离（像素）
   const rotateL = -5 - (maxRotate - 5) * gripperOpenAmount;
   const rotateR = 5 + (maxRotate - 5) * gripperOpenAmount;
   const translateX = maxTranslate * gripperOpenAmount;
@@ -182,8 +182,56 @@ function centerCar() {
   updateWheels();
 }
 
+// 轮播相关：获取轮子容器和图片
+const wheelContainers = [
+  document.getElementById('wheel1-container'),
+  document.getElementById('wheel2-container'),
+  document.getElementById('wheel3-container'),
+  document.getElementById('wheel4-container')
+];
+const wheelImgs = [
+  wheelContainers[0]?.querySelector('.wheel-img'),
+  wheelContainers[1]?.querySelector('.wheel-img'),
+  wheelContainers[2]?.querySelector('.wheel-img'),
+  wheelContainers[3]?.querySelector('.wheel-img')
+];
+const wheelImgHeight = 48; // 轮子图片高度(px)
+let wheelOffsetsY = [0, 0, 0, 0]; // 每个轮子的当前Y偏移
+
+function updateWheelAnimation() {
+  for (let i = 0; i < 4; i++) {
+    if (!wheelContainers[i] || !wheelImgs[i]) continue;
+    wheelOffsetsY[i] -= 1.2;
+    if (wheelOffsetsY[i] <= -wheelImgHeight) {
+      wheelOffsetsY[i] += wheelImgHeight;
+    }
+    // 主图片
+    wheelImgs[i].style.position = 'absolute';
+    wheelImgs[i].style.left = '0px';
+    wheelImgs[i].style.width = '48px';
+    wheelImgs[i].style.height = '48px';
+    let y = wheelOffsetsY[i] % wheelImgHeight;
+    if (y < 0) y += wheelImgHeight;
+    wheelImgs[i].style.top = (y - wheelImgHeight) + 'px';
+    // 复制一份图片用于无缝循环
+    let copyImg = wheelContainers[i].querySelector('.wheel-img-copy');
+    if (!copyImg) {
+      copyImg = wheelImgs[i].cloneNode();
+      copyImg.classList.add('wheel-img-copy');
+      wheelContainers[i].appendChild(copyImg);
+    }
+    copyImg.style.position = 'absolute';
+    copyImg.style.left = '0px';
+    copyImg.style.width = '48px';
+    copyImg.style.height = '48px';
+    copyImg.style.top = y + 'px';
+  }
+  requestAnimationFrame(updateWheelAnimation);
+}
+
 // 初始化
 centerCar();
 updateArm();
 updateWheels();
 controlLoop();
+updateWheelAnimation(); // 启动轮播动画
