@@ -40,6 +40,29 @@ body {
   pointer-events: none;
 }
 
+#wheel1, #wheel3 {
+  position: absolute;
+  left: -100px;
+  width: 48.101px;
+  height: 112.159px;
+  pointer-events: none;
+  z-index: 1;
+}
+#wheel2, #wheel4 {
+  position: absolute;
+  left: 124.476px; /* 182.577 - 48.101 */
+  width: 48.101px;
+  height: 112.159px;
+  pointer-events: none;
+  z-index: 1;
+}
+#wheel1, #wheel2 {
+  top: 23px;   /* 调整上轮的高度，原来是20px */
+}
+#wheel3, #wheel4 {
+  top: 278px;  /* 调整下轮的高度，原来是230px */
+}
+
 /* === 机械臂 === */
 #arm {
   position: absolute;
@@ -99,4 +122,28 @@ body {
   /* box-shadow: 0 0 5px rgba(255, 255, 255, 0.2); */
   /* line-height: 1.6; */
   z-index: 10;
+}
+
+.wheel-container {
+  position: absolute;
+  width: 48.101px;
+  height: 112.159px;
+  overflow: hidden;
+  z-index: 2;
+  pointer-events: none;
+  background: transparent;
+}
+#wheel1c { left: -100px; top: 23px; }
+#wheel2c { left: 124.476px; top: 23px; }
+#wheel3c { left: -100px; top: 278px; }
+#wheel4c { left: 124.476px; top: 278px; }
+
+.wheel-container img {
+  width: 48.101px;
+  height: 112.159px;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
 }

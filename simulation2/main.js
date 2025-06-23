@@ -3,9 +3,22 @@ const arm = document.getElementById('arm');
 const wrist = document.getElementById('wrist');
 const fingerL = document.getElementById('fingerL');
 const fingerR = document.getElementById('fingerR');
+// 获取四个轮子
+const wheel1 = document.getElementById('wheel1');
+const wheel2 = document.getElementById('wheel2');
+const wheel3 = document.getElementById('wheel3');
+const wheel4 = document.getElementById('wheel4');
 const carWidth = 182.577;
 const carHeight = 281.553;
 
+
+// 轮子相对于 car 左上角的偏移量（请根据实际图片调整）
+const wheelOffsets = [
+  { left: 10, top: 20 },    // wheel1 左上
+  { left: 130, top: 20 },   // wheel2 右上
+  { left: 10, top: 230 },   // wheel3 左下
+  { left: 130, top: 230 }   // wheel4 右下
+];
 
 let rotation = 0;
 const step = 2.3;
@@ -60,6 +73,13 @@ function updateArm() {
   fingerR.style.transform = `rotate(${rotateR}deg) translateX(${translateX}px)`;
 }
 
+// 更新四个轮子的位置和旋转
+function updateWheels() {
+  const wheels = [wheel1, wheel2, wheel3, wheel4];
+  for (let i = 0; i < 4; i++) {
+    wheels[i].style.transform = `rotate(${rotation}deg)`;
+  }
+}
 
 function moveCar(direction) {
   const rad = degToRad(rotation);
@@ -92,17 +112,18 @@ function moveCar(direction) {
   car.style.left = carX + 'px';
   car.style.top = carY + 'px';
   car.style.transform = `rotate(${rotation}deg)`;
+  updateWheels();
 }
 
 function controlLoop() {
   let changed = false;
 
-  if (keysPressed['r']) {
+  if (keysPressed['f']) {
     const prev = armHeight;
     armHeight = Math.max(armMin, armHeight - 0.5);
     changed ||= (prev !== armHeight);
   }
-  if (keysPressed['f']) {
+  if (keysPressed['r']) {
     const prev = armHeight;
     armHeight = Math.min(armMax, armHeight + 0.5);
     changed ||= (prev !== armHeight);
@@ -158,10 +179,11 @@ function centerCar() {
   car.style.left = carX + 'px';
   car.style.top = carY + 'px';
   car.style.transform = `rotate(${rotation}deg)`;
+  updateWheels();
 }
-window.addEventListener('resize', centerCar);
 
 // 初始化
 centerCar();
 updateArm();
+updateWheels();
 controlLoop();
